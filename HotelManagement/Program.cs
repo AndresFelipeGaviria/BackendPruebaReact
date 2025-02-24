@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using HotelManagement.Aplication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -28,6 +29,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.WriteIndented = true;
+    });
+
 
 var configuration = builder.Configuration;
 var services = builder.Services;
@@ -52,6 +59,9 @@ services
 
 services.AddScoped<IJwtService, JwtService>();
 services.AddScoped<IAuthService, AuthService>();
+services.AddScoped<IHotelService, HotelService>();
+services.AddScoped<IRoomService, RoomService>();
+services.AddScoped<IHotelSearchService, HotelSearchService>();
 
 
 

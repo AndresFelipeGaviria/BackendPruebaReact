@@ -12,7 +12,7 @@
         public string PhoneNumber { get; set; }
 
         public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
-        public ICollection<EmergencyContact> EmergencyContacts { get; set; } = new List<EmergencyContact>();
+        public EmergencyContact EmergencyContact { get; set; }
     }
 
 }

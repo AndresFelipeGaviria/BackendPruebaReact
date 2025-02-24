@@ -32,6 +32,10 @@ namespace HotelManagement.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -60,7 +64,7 @@ namespace HotelManagement.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("PhoneNumber")
+                    b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -69,9 +73,57 @@ namespace HotelManagement.Migrations
 
                     b.HasKey("EmergencyContactId");
 
-                    b.HasIndex("TravelerId");
+                    b.HasIndex("TravelerId")
+                        .IsUnique();
 
                     b.ToTable("EmergencyContacts");
+                });
+
+            modelBuilder.Entity("HotelManagement.Models.Entities.Guest", b =>
+                {
+                    b.Property<Guid>("GuestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("DocumentNumber")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid>("ReservationId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("GuestId");
+
+                    b.HasIndex("ReservationId");
+
+                    b.ToTable("Guests");
                 });
 
             modelBuilder.Entity("HotelManagement.Models.Entities.Reservation", b =>
@@ -86,23 +138,24 @@ namespace HotelManagement.Migrations
                     b.Property<DateTime>("CheckOutDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("Guests")
-                        .HasColumnType("int");
+                    b.Property<Guid>("EmergencyContactId")
+                        .HasColumnType("char(36)");
 
                     b.Property<Guid>("HotelId")
                         .HasColumnType("char(36)");
 
+                    b.Property<int>("NumberOfGuests")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("RoomId")
                         .HasColumnType("char(36)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<Guid>("TravelerId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("ReservationId");
+
+                    b.HasIndex("EmergencyContactId");
 
                     b.HasIndex("HotelId");
 
@@ -121,6 +174,9 @@ namespace HotelManagement.Migrations
 
                     b.Property<decimal>("BaseCost")
                         .HasColumnType("decimal(65,30)");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("HotelId")
                         .HasColumnType("char(36)");
@@ -383,16 +439,33 @@ namespace HotelManagement.Migrations
             modelBuilder.Entity("HotelManagement.Models.Entities.EmergencyContact", b =>
                 {
                     b.HasOne("HotelManagement.Models.Entities.Traveler", "Traveler")
-                        .WithMany("EmergencyContacts")
-                        .HasForeignKey("TravelerId")
+                        .WithOne("EmergencyContact")
+                        .HasForeignKey("HotelManagement.Models.Entities.EmergencyContact", "TravelerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Traveler");
                 });
 
+            modelBuilder.Entity("HotelManagement.Models.Entities.Guest", b =>
+                {
+                    b.HasOne("HotelManagement.Models.Entities.Reservation", "Reservation")
+                        .WithMany("Guests")
+                        .HasForeignKey("ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reservation");
+                });
+
             modelBuilder.Entity("HotelManagement.Models.Entities.Reservation", b =>
                 {
+                    b.HasOne("HotelManagement.Models.Entities.EmergencyContact", "EmergencyContact")
+                        .WithMany()
+                        .HasForeignKey("EmergencyContactId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("HotelManagement.Domain.Entities.Hotel", "Hotel")
                         .WithMany("Reservations")
                         .HasForeignKey("HotelId")
@@ -400,7 +473,7 @@ namespace HotelManagement.Migrations
                         .IsRequired();
 
                     b.HasOne("HotelManagement.Models.Entities.Room", "Room")
-                        .WithMany()
+                        .WithMany("Reservations")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -410,6 +483,8 @@ namespace HotelManagement.Migrations
                         .HasForeignKey("TravelerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("EmergencyContact");
 
                     b.Navigation("Hotel");
 
@@ -487,9 +562,20 @@ namespace HotelManagement.Migrations
                     b.Navigation("Rooms");
                 });
 
+            modelBuilder.Entity("HotelManagement.Models.Entities.Reservation", b =>
+                {
+                    b.Navigation("Guests");
+                });
+
+            modelBuilder.Entity("HotelManagement.Models.Entities.Room", b =>
+                {
+                    b.Navigation("Reservations");
+                });
+
             modelBuilder.Entity("HotelManagement.Models.Entities.Traveler", b =>
                 {
-                    b.Navigation("EmergencyContacts");
+                    b.Navigation("EmergencyContact")
+                        .IsRequired();
 
                     b.Navigation("Reservations");
                 });

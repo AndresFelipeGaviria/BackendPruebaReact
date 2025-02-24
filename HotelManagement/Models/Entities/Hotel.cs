@@ -8,6 +8,7 @@ namespace HotelManagement.Domain.Entities
         public string Name { get; set; }
         public string Address { get; set; }
         public bool IsActive { get; set; } = true;
+        public string City { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
