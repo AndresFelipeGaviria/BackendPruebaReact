@@ -16,7 +16,6 @@ namespace HotelManagement.Controllers
             _hotelSearchService = hotelSearchService;
         }
 
-        // 🔎 Endpoint para buscar hoteles con filtros
         [HttpGet("search")]
         public async Task<IActionResult> SearchHotels(
             [FromQuery] DateTime? checkIn,
@@ -29,7 +28,6 @@ namespace HotelManagement.Controllers
             return Ok(hotels);
         }
 
-        // 🏨 Endpoint para obtener habitaciones disponibles en un hotel
         [HttpGet("hotel/{hotelId}/available-rooms")]
         public async Task<IActionResult> GetAvailableRooms(Guid hotelId, [FromQuery] DateTime checkIn, [FromQuery] DateTime checkOut)
         {
@@ -37,7 +35,6 @@ namespace HotelManagement.Controllers
             return Ok(rooms);
         }
 
-        // ✍️ Endpoint para realizar una reserva
         [HttpPost("reserve")]
         public async Task<IActionResult> CreateReservation([FromBody] ReservationRequestDto request)
         {
